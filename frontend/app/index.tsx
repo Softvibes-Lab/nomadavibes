@@ -115,7 +115,7 @@ export default function Index() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.logo}>NomadShift</Text>
-          <Text style={styles.headerSubtitle}>\u00bfQui\u00e9n eres?</Text>
+          <Text style={styles.headerSubtitle}>¿Quién eres?</Text>
         </View>
 
         {/* Role Cards Carousel */}
@@ -191,7 +191,7 @@ export default function Index() {
         {/* Features */}
         <View style={styles.features}>
           <View style={styles.featureItem}>
-            <View style={[styles.featureIcon, { backgroundColor: COLORS.primary + '20' }]}>
+            <View style={[styles.featureIcon, { backgroundColor: COLORS.primaryTint20 }]}>
               <Ionicons name="location" size={24} color={COLORS.primary} />
             </View>
             <View style={styles.featureText}>
@@ -201,7 +201,7 @@ export default function Index() {
           </View>
 
           <View style={styles.featureItem}>
-            <View style={[styles.featureIcon, { backgroundColor: COLORS.accent + '20' }]}>
+            <View style={[styles.featureIcon, { backgroundColor: COLORS.primaryTint20 }]}>
               <Ionicons name="star" size={24} color={COLORS.accent} />
             </View>
             <View style={styles.featureText}>
@@ -211,7 +211,7 @@ export default function Index() {
           </View>
 
           <View style={styles.featureItem}>
-            <View style={[styles.featureIcon, { backgroundColor: COLORS.success + '20' }]}>
+            <View style={[styles.featureIcon, { backgroundColor: COLORS.primaryTint20 }]}>
               <Ionicons name="cash" size={24} color={COLORS.success} />
             </View>
             <View style={styles.featureText}>
