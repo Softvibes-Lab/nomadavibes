@@ -206,7 +206,7 @@ export default function Index() {
             </View>
             <View style={styles.featureText}>
               <Text style={styles.featureTitle}>Sistema Prestige</Text>
-              <Text style={styles.featureDesc}>Construye tu reputaci\u00f3n</Text>
+              <Text style={styles.featureDesc}>Construye tu reputación</Text>
             </View>
           </View>
 
