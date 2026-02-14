@@ -13,14 +13,17 @@ export default function TabsLayout() {
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textSecondary,
         tabBarLabelStyle: styles.tabBarLabel,
+        tabBarShowLabel: true,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Inicio',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? styles.activeIconContainer : undefined}>
+              <Ionicons name={focused ? "home" : "home-outline"} size={size} color={color} />
+            </View>
           ),
         }}
       />
@@ -28,8 +31,10 @@ export default function TabsLayout() {
         name="map"
         options={{
           title: 'Mapa',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="map" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? styles.activeIconContainer : undefined}>
+              <Ionicons name={focused ? "map" : "map-outline"} size={size} color={color} />
+            </View>
           ),
         }}
       />
@@ -37,8 +42,10 @@ export default function TabsLayout() {
         name="chat"
         options={{
           title: 'Chat',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubbles" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? styles.activeIconContainer : undefined}>
+              <Ionicons name={focused ? "chatbubbles" : "chatbubbles-outline"} size={size} color={color} />
+            </View>
           ),
         }}
       />
@@ -46,8 +53,10 @@ export default function TabsLayout() {
         name="profile"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person" size={size} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={focused ? styles.activeIconContainer : undefined}>
+              <Ionicons name={focused ? "person" : "person-outline"} size={size} color={color} />
+            </View>
           ),
         }}
       />
@@ -67,5 +76,10 @@ const styles = StyleSheet.create({
   tabBarLabel: {
     fontSize: SIZES.fontXs,
     fontWeight: '600',
+  },
+  activeIconContainer: {
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS.primary,
+    paddingBottom: 2,
   },
 });
