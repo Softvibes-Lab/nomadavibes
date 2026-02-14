@@ -116,54 +116,69 @@ backend:
       - working: true
         agent: "main"
         comment: "Tested with curl - returns API info"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/ returns correct API info with NomadShift message"
 
   - task: "Auth Session Exchange"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented POST /api/auth/session for Emergent Auth integration"
+      - working: false
+        agent: "testing"
+        comment: "❌ FAILED: POST /api/auth/session returns HTTP 520 Cloudflare error - issue with Emergent Auth external API call. Server disconnection between Cloudflare and origin server."
 
   - task: "Get Current User (Auth Me)"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented GET /api/auth/me"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/auth/me works correctly with Bearer token authentication, returns user data"
 
   - task: "Set User Role"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented POST /api/user/set-role"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /api/user/set-role successfully sets role to 'worker', returns success message"
 
   - task: "Worker Onboarding"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented POST /api/onboarding/worker"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /api/onboarding/worker completes successfully, creates profile with skills, location, badges"
 
   - task: "Business Onboarding"
     implemented: true
@@ -176,18 +191,24 @@ backend:
       - working: "NA"
         agent: "main"
         comment: "Implemented POST /api/onboarding/business"
+      - working: "NA"
+        agent: "testing"
+        comment: "Not tested in this session - worker onboarding was prioritized"
 
   - task: "AI Description Improvement (Z.ai GLM)"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented POST /api/ai/improve-description using Z.ai API"
+      - working: false
+        agent: "testing"
+        comment: "❌ FAILED: POST /api/ai/improve-description returns HTTP 520 Cloudflare error - Z.ai GLM-4.5 API endpoint has server connectivity issues. Backend logs show 'Server disconnected without sending a response'"
 
   - task: "Get Categories"
     implemented: true
@@ -200,6 +221,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Tested with curl - returns categories list"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/categories returns 10 categories including 'Servicio de Alimentos', 'Retail / Ventas', 'Limpieza'"
 
   - task: "Get Skills"
     implemented: true
@@ -212,30 +236,39 @@ backend:
       - working: true
         agent: "main"
         comment: "Tested with curl - returns skills list"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/skills returns 20 skills including 'Barista', 'Cocina', 'Atención al cliente'"
 
   - task: "Jobs CRUD"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented jobs endpoints (create, get, apply, accept, complete)"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Jobs CRUD working - GET /api/jobs (empty/with data), POST /api/jobs (create), POST /api/jobs/{id}/apply all successful. Job creation, listing, and application flow complete."
 
   - task: "Chat System"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Implemented chat rooms and messages endpoints"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/chats returns empty list initially (expected), endpoint accessible with auth"
 
   - task: "Reviews System"
     implemented: true
@@ -248,6 +281,9 @@ backend:
       - working: "NA"
         agent: "main"
         comment: "Implemented reviews with prestige/badges system"
+      - working: "NA"
+        agent: "testing"
+        comment: "Not tested in this session - requires completed job for review creation"
 
 frontend:
   - task: "Welcome/Login Screen"
