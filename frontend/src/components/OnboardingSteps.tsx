@@ -77,7 +77,7 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
 
   const pickBusinessPhoto = async () => {
     if (businessPhotos.length >= 5) {
-      Alert.alert('L\u00edmite alcanzado', 'M\u00e1ximo 5 fotos del negocio');
+      Alert.alert('Límite alcanzado', 'Máximo 5 fotos del negocio');
       return;
     }
 
@@ -98,7 +98,7 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permiso denegado', 'Necesitamos acceso a tu ubicaci\u00f3n');
+        Alert.alert('Permiso denegado', 'Necesitamos acceso a tu ubicación');
         return;
       }
 
@@ -121,13 +121,13 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
       }
     } catch (error) {
       console.error('Error getting location:', error);
-      Alert.alert('Error', 'No se pudo obtener la ubicaci\u00f3n');
+      Alert.alert('Error', 'No se pudo obtener la ubicación');
     }
   };
 
   const improveWithAI = async () => {
     if (!bio.trim()) {
-      Alert.alert('Error', 'Escribe una descripci\u00f3n primero');
+      Alert.alert('Error', 'Escribe una descripción primero');
       return;
     }
 
@@ -137,7 +137,7 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
       setBio(response.data.improved);
     } catch (error) {
       console.error('AI improvement error:', error);
-      Alert.alert('Error', 'No se pudo mejorar la descripci\u00f3n');
+      Alert.alert('Error', 'No se pudo mejorar la descripción');
     } finally {
       setAiLoading(false);
     }
@@ -242,11 +242,11 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
 
   const renderBasicInfoStep = () => (
     <View style={styles.stepContent}>
-      <Text style={styles.stepTitle}>Informaci\u00f3n B\u00e1sica</Text>
+      <Text style={styles.stepTitle}>Información Básica</Text>
       <Text style={styles.stepSubtitle}>
         {role === 'worker'
-          ? 'Cu\u00e9ntanos sobre ti'
-          : 'Cu\u00e9ntanos sobre ti y tu negocio'}
+          ? 'Cuéntanos sobre ti'
+          : 'Cuéntanos sobre ti y tu negocio'}
       </Text>
 
       {/* Photo */}
@@ -293,12 +293,12 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
   const renderSkillsStep = () => (
     <View style={styles.stepContent}>
       <Text style={styles.stepTitle}>
-        {role === 'worker' ? 'Tus Habilidades' : 'Categor\u00edas que Contratas'}
+        {role === 'worker' ? 'Tus Habilidades' : 'Categorías que Contratas'}
       </Text>
       <Text style={styles.stepSubtitle}>
         {role === 'worker'
           ? 'Selecciona las habilidades que tienes'
-          : 'Selecciona las \u00e1reas para las que contratas'}
+          : 'Selecciona las áreas para las que contratas'}
       </Text>
 
       <View style={styles.skillsContainer}>
@@ -330,9 +330,9 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
 
   const renderBioStep = () => (
     <View style={styles.stepContent}>
-      <Text style={styles.stepTitle}>Tu Descripci\u00f3n</Text>
+      <Text style={styles.stepTitle}>Tu Descripción</Text>
       <Text style={styles.stepSubtitle}>
-        Escribe una breve descripci\u00f3n sobre ti
+        Escribe una breve descripción sobre ti
       </Text>
 
       <TextInput
@@ -340,8 +340,8 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
         value={bio}
         onChangeText={setBio}
         placeholder={role === 'worker'
-          ? 'Ej: Soy una persona responsable con 3 a\u00f1os de experiencia en atenci\u00f3n al cliente...'
-          : 'Ej: Somos un caf\u00e9 acogedor en el centro de la ciudad...'}
+          ? 'Ej: Soy una persona responsable con 3 años de experiencia en atención al cliente...'
+          : 'Ej: Somos un café acogedor en el centro de la ciudad...'}
         placeholderTextColor={COLORS.textDisabled}
         multiline
         numberOfLines={6}
@@ -354,10 +354,10 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
         disabled={aiLoading}
       >
         {aiLoading ? (
-          <ActivityIndicator color={COLORS.primary} />
+          <ActivityIndicator color={COLORS.secondary} />
         ) : (
           <>
-            <Ionicons name="sparkles" size={20} color={COLORS.primary} />
+            <Ionicons name="sparkles" size={20} color={COLORS.secondary} />
             <Text style={styles.aiButtonText}>Mejorar con IA</Text>
           </>
         )}
@@ -368,7 +368,7 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
   const renderBusinessInfoStep = () => (
     <View style={styles.stepContent}>
       <Text style={styles.stepTitle}>Tu Negocio</Text>
-      <Text style={styles.stepSubtitle}>Informaci\u00f3n de tu establecimiento</Text>
+      <Text style={styles.stepSubtitle}>Información de tu establecimiento</Text>
 
       <View style={styles.inputContainer}>
         <Text style={styles.inputLabel}>Nombre del negocio *</Text>
@@ -376,7 +376,7 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
           style={styles.input}
           value={businessName}
           onChangeText={setBusinessName}
-          placeholder="Ej: Caf\u00e9 Central"
+          placeholder="Ej: Café Central"
           placeholderTextColor={COLORS.textDisabled}
         />
       </View>
@@ -414,7 +414,7 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
 
   const renderLocationStep = () => (
     <View style={styles.stepContent}>
-      <Text style={styles.stepTitle}>Ubicaci\u00f3n</Text>
+      <Text style={styles.stepTitle}>Ubicación</Text>
       <Text style={styles.stepSubtitle}>
         {role === 'worker'
           ? 'Para mostrarte trabajos cercanos'
@@ -423,23 +423,23 @@ export const OnboardingSteps: React.FC<OnboardingStepsProps> = ({
 
       <TouchableOpacity style={styles.locationButton} onPress={getLocation}>
         <Ionicons name="location" size={24} color={COLORS.primary} />
-        <Text style={styles.locationButtonText}>Obtener mi ubicaci\u00f3n</Text>
+        <Text style={styles.locationButtonText}>Obtener mi ubicación</Text>
       </TouchableOpacity>
 
       {location && (
         <View style={styles.locationInfo}>
           <Ionicons name="checkmark-circle" size={20} color={COLORS.success} />
-          <Text style={styles.locationText}>Ubicaci\u00f3n obtenida</Text>
+          <Text style={styles.locationText}>Ubicación obtenida</Text>
         </View>
       )}
 
       <View style={styles.inputContainer}>
-        <Text style={styles.inputLabel}>Direcci\u00f3n</Text>
+        <Text style={styles.inputLabel}>Dirección</Text>
         <TextInput
           style={styles.input}
           value={address}
           onChangeText={setAddress}
-          placeholder="Tu direcci\u00f3n"
+          placeholder="Tu dirección"
           placeholderTextColor={COLORS.textDisabled}
         />
       </View>
@@ -540,15 +540,15 @@ const styles = StyleSheet.create({
     paddingBottom: SIZES.sm,
   },
   progressBar: {
-    height: 4,
+    height: 6,
     backgroundColor: COLORS.border,
-    borderRadius: 2,
+    borderRadius: 3,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
     backgroundColor: COLORS.primary,
-    borderRadius: 2,
+    borderRadius: 3,
   },
   progressText: {
     marginTop: SIZES.xs,
@@ -597,7 +597,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: COLORS.primary,
     borderStyle: 'dashed',
     borderRadius: 60,
   },
@@ -665,13 +665,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderRadius: SIZES.radiusMd,
     borderWidth: 1,
-    borderColor: COLORS.primary,
+    borderColor: COLORS.secondary,
   },
   aiButtonText: {
     marginLeft: SIZES.sm,
     fontSize: SIZES.fontMd,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: COLORS.secondary,
   },
   photosScroll: {
     marginTop: SIZES.sm,
@@ -707,7 +707,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: COLORS.primary,
     borderStyle: 'dashed',
   },
   addPhotoText: {
@@ -720,7 +720,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: SIZES.md,
-    backgroundColor: COLORS.surface,
+    backgroundColor: COLORS.primaryTint,
     borderRadius: SIZES.radiusMd,
     borderWidth: 1,
     borderColor: COLORS.primary,
