@@ -56,7 +56,7 @@ export default function PostJobScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permiso denegado', 'Necesitamos acceso a tu ubicaci\u00f3n');
+        Alert.alert('Permiso denegado', 'Necesitamos acceso a tu ubicación');
         return;
       }
 
@@ -78,13 +78,13 @@ export default function PostJobScreen() {
       }
     } catch (error) {
       console.error('Error getting location:', error);
-      Alert.alert('Error', 'No se pudo obtener la ubicaci\u00f3n');
+      Alert.alert('Error', 'No se pudo obtener la ubicación');
     }
   };
 
   const improveWithAI = async () => {
     if (!description.trim()) {
-      Alert.alert('Error', 'Escribe una descripci\u00f3n primero');
+      Alert.alert('Error', 'Escribe una descripción primero');
       return;
     }
 
@@ -94,7 +94,7 @@ export default function PostJobScreen() {
       setDescription(response.data.improved);
     } catch (error) {
       console.error('AI improvement error:', error);
-      Alert.alert('Error', 'No se pudo mejorar la descripci\u00f3n');
+      Alert.alert('Error', 'No se pudo mejorar la descripción');
     } finally {
       setAiLoading(false);
     }
@@ -111,27 +111,27 @@ export default function PostJobScreen() {
   const handleSubmit = async () => {
     // Validation
     if (!title.trim()) {
-      Alert.alert('Error', 'El t\u00edtulo es requerido');
+      Alert.alert('Error', 'El título es requerido');
       return;
     }
     if (!description.trim()) {
-      Alert.alert('Error', 'La descripci\u00f3n es requerida');
+      Alert.alert('Error', 'La descripción es requerida');
       return;
     }
     if (!category) {
-      Alert.alert('Error', 'Selecciona una categor\u00eda');
+      Alert.alert('Error', 'Selecciona una categoría');
       return;
     }
     if (!hourlyRate || parseFloat(hourlyRate) <= 0) {
-      Alert.alert('Error', 'Ingresa un pago por hora v\u00e1lido');
+      Alert.alert('Error', 'Ingresa un pago por hora válido');
       return;
     }
     if (!durationHours || parseFloat(durationHours) <= 0) {
-      Alert.alert('Error', 'Ingresa una duraci\u00f3n v\u00e1lida');
+      Alert.alert('Error', 'Ingresa una duración válida');
       return;
     }
     if (!location) {
-      Alert.alert('Error', 'Obt\u00e9n tu ubicaci\u00f3n primero');
+      Alert.alert('Error', 'Obtén tu ubicación primero');
       return;
     }
 
@@ -148,7 +148,7 @@ export default function PostJobScreen() {
         address,
       });
 
-      Alert.alert('\u00c9xito', 'Trabajo publicado correctamente', [
+      Alert.alert('Éxito', 'Trabajo publicado correctamente', [
         { text: 'OK', onPress: () => router.back() },
       ]);
     } catch (error: any) {
@@ -185,7 +185,7 @@ export default function PostJobScreen() {
         >
           {/* Title */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>T\u00edtulo del trabajo *</Text>
+            <Text style={styles.label}>Título del trabajo *</Text>
             <TextInput
               style={styles.input}
               value={title}
@@ -197,7 +197,7 @@ export default function PostJobScreen() {
 
           {/* Category */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Categor\u00eda *</Text>
+            <Text style={styles.label}>Categoría *</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {categories.map((cat) => (
                 <TouchableOpacity
@@ -223,7 +223,7 @@ export default function PostJobScreen() {
 
           {/* Description */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Descripci\u00f3n *</Text>
+            <Text style={styles.label}>Descripción *</Text>
             <TextInput
               style={[styles.input, styles.textArea]}
               value={description}
@@ -264,7 +264,7 @@ export default function PostJobScreen() {
               />
             </View>
             <View style={[styles.inputContainer, { flex: 1 }]}>
-              <Text style={styles.label}>Duraci\u00f3n (horas) *</Text>
+              <Text style={styles.label}>Duración (horas) *</Text>
               <TextInput
                 style={styles.input}
                 value={durationHours}
@@ -314,22 +314,22 @@ export default function PostJobScreen() {
 
           {/* Location */}
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Ubicaci\u00f3n *</Text>
+            <Text style={styles.label}>Ubicación *</Text>
             <TouchableOpacity style={styles.locationButton} onPress={getLocation}>
               <Ionicons name="location" size={20} color={COLORS.primary} />
-              <Text style={styles.locationButtonText}>Obtener ubicaci\u00f3n</Text>
+              <Text style={styles.locationButtonText}>Obtener ubicación</Text>
             </TouchableOpacity>
             {location && (
               <View style={styles.locationInfo}>
                 <Ionicons name="checkmark-circle" size={18} color={COLORS.success} />
-                <Text style={styles.locationText}>Ubicaci\u00f3n obtenida</Text>
+                <Text style={styles.locationText}>Ubicación obtenida</Text>
               </View>
             )}
             <TextInput
               style={[styles.input, { marginTop: SIZES.sm }]}
               value={address}
               onChangeText={setAddress}
-              placeholder="Direcci\u00f3n del trabajo"
+              placeholder="Dirección del trabajo"
               placeholderTextColor={COLORS.textDisabled}
             />
           </View>

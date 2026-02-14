@@ -19,12 +19,12 @@ export default function ProfileScreen() {
 
   const handleLogout = () => {
     Alert.alert(
-      'Cerrar sesi\u00f3n',
-      '\u00bfEst\u00e1s seguro de que deseas cerrar sesi\u00f3n?',
+      'Cerrar sesión',
+      '¿Estás seguro de que deseas cerrar sesión?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'Cerrar sesi\u00f3n',
+          text: 'Cerrar sesión',
           style: 'destructive',
           onPress: async () => {
             await logout();
@@ -107,7 +107,7 @@ export default function ProfileScreen() {
                 styles.roleText,
                 { color: isWorker ? COLORS.accent : COLORS.primary }
               ]}>
-                {isWorker ? 'Trabajador N\u00f3mada' : 'Due\u00f1o de Negocio'}
+                {isWorker ? 'Trabajador Nómada' : 'Dueño de Negocio'}
               </Text>
             </View>
           </View>
@@ -162,7 +162,7 @@ export default function ProfileScreen() {
         {profile?.skills && profile.skills.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
-              {isWorker ? 'Habilidades' : 'Categor\u00edas'}
+              {isWorker ? 'Habilidades' : 'Categorías'}
             </Text>
             <View style={styles.skillsContainer}>
               {profile.skills.map((skill, index) => (
@@ -177,7 +177,7 @@ export default function ProfileScreen() {
         {/* Location */}
         {profile?.address && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Ubicaci\u00f3n</Text>
+            <Text style={styles.sectionTitle}>Ubicación</Text>
             <View style={styles.locationRow}>
               <Ionicons name="location" size={20} color={COLORS.accent} />
               <Text style={styles.locationText}>{profile.address}</Text>
@@ -211,7 +211,7 @@ export default function ProfileScreen() {
             <View style={[styles.menuIcon, { backgroundColor: COLORS.warning + '20' }]}>
               <Ionicons name="star" size={20} color={COLORS.warning} />
             </View>
-            <Text style={styles.menuText}>Mis Rese\u00f1as</Text>
+            <Text style={styles.menuText}>Mis Reseñas</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.textSecondary} />
           </TouchableOpacity>
 
@@ -227,7 +227,7 @@ export default function ProfileScreen() {
             <View style={[styles.menuIcon, { backgroundColor: COLORS.error + '20' }]}>
               <Ionicons name="log-out" size={20} color={COLORS.error} />
             </View>
-            <Text style={[styles.menuText, { color: COLORS.error }]}>Cerrar Sesi\u00f3n</Text>
+            <Text style={[styles.menuText, { color: COLORS.error }]}>Cerrar Sesión</Text>
             <Ionicons name="chevron-forward" size={20} color={COLORS.error} />
           </TouchableOpacity>
         </View>

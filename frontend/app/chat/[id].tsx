@@ -193,8 +193,8 @@ export default function ChatRoomScreen() {
           ListEmptyComponent={
             <View style={styles.emptyState}>
               <Ionicons name="chatbubble-outline" size={48} color={COLORS.textDisabled} />
-              <Text style={styles.emptyText}>Sin mensajes a\u00fan</Text>
-              <Text style={styles.emptySubtext}>\u00a1Env\u00eda el primer mensaje!</Text>
+              <Text style={styles.emptyText}>Sin mensajes aún</Text>
+              <Text style={styles.emptySubtext}>¡Envía el primer mensaje!</Text>
             </View>
           }
         />

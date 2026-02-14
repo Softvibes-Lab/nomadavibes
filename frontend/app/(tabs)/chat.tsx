@@ -120,7 +120,7 @@ export default function ChatScreen() {
           <Ionicons name="chatbubbles-outline" size={80} color={COLORS.textDisabled} />
           <Text style={styles.emptyTitle}>Sin conversaciones</Text>
           <Text style={styles.emptyText}>
-            Cuando apliques o contrates a alguien, podr\u00e1s chatear aqu\u00ed
+            Cuando apliques o contrates a alguien, podrás chatear aquí
           </Text>
         </View>
       ) : (

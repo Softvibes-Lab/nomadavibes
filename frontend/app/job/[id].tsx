@@ -74,7 +74,7 @@ export default function JobDetailScreen() {
     try {
       await jobAPI.applyToJob(id as string);
       setHasApplied(true);
-      Alert.alert('\u00c9xito', 'Tu aplicaci\u00f3n ha sido enviada');
+      Alert.alert('Éxito', 'Tu aplicación ha sido enviada');
     } catch (error: any) {
       Alert.alert('Error', error.response?.data?.detail || 'No se pudo aplicar');
     } finally {
@@ -85,7 +85,7 @@ export default function JobDetailScreen() {
   const handleAcceptApplication = async (applicationId: string) => {
     try {
       const response = await jobAPI.acceptApplication(id as string, applicationId);
-      Alert.alert('\u00c9xito', 'Trabajador aceptado', [
+      Alert.alert('Éxito', 'Trabajador aceptado', [
         {
           text: 'Ir al chat',
           onPress: () => router.push(`/chat/${response.data.chat_room_id}`),
@@ -101,7 +101,7 @@ export default function JobDetailScreen() {
   const handleCompleteJob = async () => {
     Alert.alert(
       'Completar trabajo',
-      '\u00bfEst\u00e1s seguro de que el trabajo ha sido completado?',
+      '¿Estás seguro de que el trabajo ha sido completado?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -109,7 +109,7 @@ export default function JobDetailScreen() {
           onPress: async () => {
             try {
               await jobAPI.completeJob(id as string);
-              Alert.alert('\u00c9xito', 'Trabajo marcado como completado');
+              Alert.alert('Éxito', 'Trabajo marcado como completado');
               loadJobDetails();
             } catch (error: any) {
               Alert.alert('Error', error.response?.data?.detail || 'Error al completar');
@@ -212,7 +212,7 @@ export default function JobDetailScreen() {
               </View>
               <View style={styles.detailItem}>
                 <Ionicons name="time" size={24} color={COLORS.primary} />
-                <Text style={styles.detailLabel}>Duraci\u00f3n</Text>
+                <Text style={styles.detailLabel}>Duración</Text>
                 <Text style={styles.detailValue}>{job.duration_hours}h</Text>
               </View>
               <View style={styles.detailItem}>
@@ -225,7 +225,7 @@ export default function JobDetailScreen() {
 
           {/* Location */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Ubicaci\u00f3n</Text>
+            <Text style={styles.sectionTitle}>Ubicación</Text>
             <View style={styles.locationRow}>
               <Ionicons name="location" size={20} color={COLORS.accent} />
               <Text style={styles.locationText}>{job.address}</Text>
@@ -234,7 +234,7 @@ export default function JobDetailScreen() {
 
           {/* Description */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Descripci\u00f3n</Text>
+            <Text style={styles.sectionTitle}>Descripción</Text>
             <Text style={styles.description}>{job.description}</Text>
           </View>
 

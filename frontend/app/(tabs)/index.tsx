@@ -176,7 +176,7 @@ export default function HomeScreen() {
 
         {/* Categories */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Categor\u00edas</Text>
+          <Text style={styles.sectionTitle}>Categorías</Text>
         </View>
         <ScrollView
           horizontal
@@ -268,7 +268,7 @@ export default function HomeScreen() {
           <View style={styles.emptyState}>
             <Ionicons name="briefcase-outline" size={64} color={COLORS.textDisabled} />
             <Text style={styles.emptyText}>No hay trabajos disponibles</Text>
-            <Text style={styles.emptySubtext}>Intenta cambiar los filtros o vuelve m\u00e1s tarde</Text>
+            <Text style={styles.emptySubtext}>Intenta cambiar los filtros o vuelve más tarde</Text>
           </View>
         ) : (
           jobs.map((job) => (

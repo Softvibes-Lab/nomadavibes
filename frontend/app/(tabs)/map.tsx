@@ -126,7 +126,7 @@ export default function MapScreen() {
                 html: '<div class="user-marker"></div>',
                 iconSize: [20, 20]
               })
-            }).addTo(map).bindPopup('Tu ubicaci\u00f3n');
+            }).addTo(map).bindPopup('Tu ubicación');
           ` : ''}
           
           // Job markers
