@@ -442,6 +442,42 @@ Highlight key requirements and benefits.
 Keep it under 200 words. Write in Spanish if the input is in Spanish, otherwise in English.
 Only return the improved description, no explanations."""
     
+    # Fallback improvement function
+    def generate_fallback_improvement(text: str, context: str) -> str:
+        """Generate a basic improvement when AI API is unavailable"""
+        text = text.strip()
+        if not text:
+            return text
+        
+        # Add professional opening and closing based on context
+        if context == "profile":
+            # Detect Spanish
+            is_spanish = any(word in text.lower() for word in ['soy', 'tengo', 'experiencia', 'trabajo', 'años'])
+            if is_spanish:
+                improved = f"Profesional comprometido y confiable. {text}"
+                if not text.endswith('.'):
+                    improved += "."
+                improved += " Disponible para trabajar de inmediato y con excelente actitud de servicio."
+            else:
+                improved = f"Dedicated and reliable professional. {text}"
+                if not text.endswith('.'):
+                    improved += "."
+                improved += " Available immediately with excellent work ethic."
+        else:
+            is_spanish = any(word in text.lower() for word in ['buscamos', 'necesitamos', 'trabajo', 'horario'])
+            if is_spanish:
+                improved = f"¡Oportunidad laboral! {text}"
+                if not text.endswith('.'):
+                    improved += "."
+                improved += " Ambiente de trabajo agradable y pago competitivo."
+            else:
+                improved = f"Great opportunity! {text}"
+                if not text.endswith('.'):
+                    improved += "."
+                improved += " Friendly work environment and competitive pay."
+        
+        return improved
+    
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
@@ -462,8 +498,14 @@ Only return the improved description, no explanations."""
             )
             
             if response.status_code != 200:
-                logger.error(f"Z.ai API error: {response.status_code} - {response.text}")
-                raise HTTPException(status_code=500, detail="AI service unavailable")
+                logger.warning(f"Z.ai API error: {response.status_code} - using fallback")
+                # Use fallback improvement
+                improved_text = generate_fallback_improvement(data.description, data.context)
+                return {
+                    "original": data.description,
+                    "improved": improved_text,
+                    "fallback": True
+                }
             
             result = response.json()
             improved_text = result["choices"][0]["message"]["content"]
@@ -473,10 +515,21 @@ Only return the improved description, no explanations."""
                 "improved": improved_text.strip()
             }
     except httpx.TimeoutException:
-        raise HTTPException(status_code=504, detail="AI service timeout")
+        logger.warning("Z.ai API timeout - using fallback")
+        improved_text = generate_fallback_improvement(data.description, data.context)
+        return {
+            "original": data.description,
+            "improved": improved_text,
+            "fallback": True
+        }
     except Exception as e:
-        logger.error(f"AI improvement error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to improve description")
+        logger.warning(f"AI improvement error: {e} - using fallback")
+        improved_text = generate_fallback_improvement(data.description, data.context)
+        return {
+            "original": data.description,
+            "improved": improved_text,
+            "fallback": True
+        }
 
 # ==================== JOB ENDPOINTS ====================
 
