@@ -414,13 +414,16 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Business Onboarding"
+    - "Reviews System"
+  stuck_tasks:
     - "Auth Session Exchange"
     - "AI Description Improvement (Z.ai GLM)"
-    - "Jobs CRUD"
-  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
     message: "Completed initial implementation of NomadShift MVP. Backend has all core APIs (auth, onboarding, jobs, chat, reviews). Frontend has all screens (welcome, role selection, onboarding, tabs, job details, chat). Please test the backend API endpoints focusing on auth flow, AI integration, and jobs CRUD."
+  - agent: "testing"
+    message: "✅ BACKEND TESTING COMPLETE: 11/13 tasks working correctly. Core functionality (auth, user management, jobs CRUD, chat) is operational. ❌ CRITICAL ISSUES: 1) Auth Session Exchange failing due to Emergent Auth API 404 errors 2) AI Description Improvement failing due to Z.ai GLM-4.5 API Cloudflare 520 errors. Both are third-party integration issues requiring external service fixes or alternative approaches."
