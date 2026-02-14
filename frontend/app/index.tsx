@@ -215,7 +215,7 @@ export default function Index() {
               <Ionicons name="cash" size={24} color={COLORS.success} />
             </View>
             <View style={styles.featureText}>
-              <Text style={styles.featureTitle}>Pago R\u00e1pido</Text>
+              <Text style={styles.featureTitle}>Pago Rápido</Text>
               <Text style={styles.featureDesc}>Gana dinero de forma flexible</Text>
             </View>
           </View>
@@ -235,7 +235,7 @@ export default function Index() {
         </TouchableOpacity>
 
         <Text style={styles.termsText}>
-          Al continuar, aceptas nuestros T\u00e9rminos y Condiciones
+          Al continuar, aceptas nuestros Términos y Condiciones
         </Text>
       </View>
     </View>
