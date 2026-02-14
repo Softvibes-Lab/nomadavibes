@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,11 +13,16 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
-import { WebView } from 'react-native-webview';
 import { jobAPI } from '../../src/services/api';
 import { COLORS, SIZES, SHADOWS } from '../../src/constants/theme';
 
 const { width, height } = Dimensions.get('window');
+
+// Conditionally import WebView for native platforms
+let WebView: any = null;
+if (Platform.OS !== 'web') {
+  WebView = require('react-native-webview').WebView;
+}
 
 export default function MapScreen() {
   const router = useRouter();
@@ -40,6 +45,9 @@ export default function MapScreen() {
       if (status === 'granted') {
         const loc = await Location.getCurrentPositionAsync({});
         setLocation({ lat: loc.coords.latitude, lng: loc.coords.longitude });
+      } else {
+        // Default to Mexico City if no permission
+        setLocation({ lat: 19.4326, lng: -99.1332 });
       }
 
       // Load jobs
@@ -47,6 +55,8 @@ export default function MapScreen() {
       setJobs(response.data);
     } catch (error) {
       console.error('Error loading data:', error);
+      // Set default location on error
+      setLocation({ lat: 19.4326, lng: -99.1332 });
     } finally {
       setLoading(false);
     }
@@ -59,7 +69,7 @@ export default function MapScreen() {
 
   // Generate OpenStreetMap HTML
   const generateMapHtml = () => {
-    const center = location || { lat: 19.4326, lng: -99.1332 }; // Default to Mexico City
+    const center = location || { lat: 19.4326, lng: -99.1332 };
     
     const markers = jobs.map((job, index) => {
       if (!job.location) return '';
@@ -67,10 +77,10 @@ export default function MapScreen() {
         L.marker([${job.location.lat}, ${job.location.lng}], {
           icon: L.divIcon({
             className: 'custom-marker',
-            html: '<div class="marker-pin" onclick="window.ReactNativeWebView.postMessage(JSON.stringify({type:\'selectJob\',jobId:\'${job.job_id}\'}))">${index + 1}</div>',
+            html: '<div class="marker-pin">${index + 1}</div>',
             iconSize: [30, 30]
           })
-        }).addTo(map).bindPopup('<b>${job.title}</b><br>$${job.hourly_rate}/hr');
+        }).addTo(map).bindPopup('<b>${job.title}</b><br>$${job.hourly_rate}/hr<br><small>${job.business_name}</small>');
       `;
     }).join('\n');
 
@@ -78,17 +88,18 @@ export default function MapScreen() {
       <!DOCTYPE html>
       <html>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <style>
-          body { margin: 0; padding: 0; }
-          #map { width: 100%; height: 100vh; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          html, body { width: 100%; height: 100%; overflow: hidden; }
+          #map { width: 100%; height: 100%; }
           .custom-marker { background: transparent; border: none; }
           .marker-pin {
-            width: 30px;
-            height: 30px;
-            background: #FF6B00;
+            width: 32px;
+            height: 32px;
+            background: #00BFA5;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -96,26 +107,37 @@ export default function MapScreen() {
             color: white;
             font-weight: bold;
             font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             border: 3px solid white;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            cursor: pointer;
           }
           .user-marker {
-            width: 20px;
-            height: 20px;
-            background: #00B8A9;
+            width: 16px;
+            height: 16px;
+            background: #10B981;
             border-radius: 50%;
             border: 3px solid white;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          }
+          .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+          }
+          .leaflet-popup-content {
+            margin: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           }
         </style>
       </head>
       <body>
         <div id="map"></div>
         <script>
-          var map = L.map('map').setView([${center.lat}, ${center.lng}], 13);
+          var map = L.map('map', {
+            zoomControl: true,
+            attributionControl: false
+          }).setView([${center.lat}, ${center.lng}], 13);
+          
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
+            maxZoom: 19
           }).addTo(map);
           
           // User location marker
@@ -124,31 +146,28 @@ export default function MapScreen() {
               icon: L.divIcon({
                 className: 'custom-marker',
                 html: '<div class="user-marker"></div>',
-                iconSize: [20, 20]
+                iconSize: [16, 16]
               })
             }).addTo(map).bindPopup('Tu ubicación');
           ` : ''}
           
           // Job markers
           ${markers}
+          
+          // Fit bounds if there are jobs
+          ${jobs.length > 0 ? `
+            var bounds = L.latLngBounds([
+              ${jobs.filter(j => j.location).map(j => `[${j.location.lat}, ${j.location.lng}]`).join(',')}
+              ${location ? `,[${location.lat}, ${location.lng}]` : ''}
+            ]);
+            if (bounds.isValid()) {
+              map.fitBounds(bounds, { padding: [50, 50] });
+            }
+          ` : ''}
         </script>
       </body>
       </html>
     `;
-  };
-
-  const handleWebViewMessage = (event: any) => {
-    try {
-      const data = JSON.parse(event.nativeEvent.data);
-      if (data.type === 'selectJob') {
-        const job = jobs.find(j => j.job_id === data.jobId);
-        if (job) {
-          handleJobSelect(job);
-        }
-      }
-    } catch (error) {
-      console.error('WebView message error:', error);
-    }
   };
 
   if (loading) {
@@ -172,42 +191,68 @@ export default function MapScreen() {
 
       {/* Map */}
       <View style={styles.mapContainer}>
-        <WebView
-          source={{ html: generateMapHtml() }}
-          style={styles.map}
-          onMessage={handleWebViewMessage}
-          javaScriptEnabled
-          domStorageEnabled
-        />
+        {Platform.OS === 'web' ? (
+          // Use iframe for web
+          <iframe
+            srcDoc={generateMapHtml()}
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            title="Map"
+          />
+        ) : WebView ? (
+          // Use WebView for native
+          <WebView
+            source={{ html: generateMapHtml() }}
+            style={styles.map}
+            javaScriptEnabled
+            domStorageEnabled
+            startInLoadingState
+            renderLoading={() => (
+              <View style={styles.mapLoading}>
+                <ActivityIndicator size="large" color={COLORS.primary} />
+              </View>
+            )}
+          />
+        ) : (
+          <View style={styles.mapFallback}>
+            <Ionicons name="map-outline" size={64} color={COLORS.textDisabled} />
+            <Text style={styles.mapFallbackText}>Mapa no disponible</Text>
+          </View>
+        )}
       </View>
 
       {/* Jobs List (Bottom Sheet) */}
       <View style={styles.bottomSheet}>
         <View style={styles.handle} />
         <Text style={styles.sheetTitle}>Trabajos disponibles</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {jobs.map((job) => (
-            <TouchableOpacity
-              key={job.job_id}
-              style={styles.jobChip}
-              onPress={() => handleJobSelect(job)}
-            >
-              <View style={styles.jobChipHeader}>
-                <Text style={styles.jobChipTitle} numberOfLines={1}>
-                  {job.title}
-                </Text>
-                <Text style={styles.jobChipRate}>${job.hourly_rate}/hr</Text>
-              </View>
-              <Text style={styles.jobChipBusiness}>{job.business_name}</Text>
-              {job.distance_km && (
-                <View style={styles.distanceRow}>
-                  <Ionicons name="location" size={14} color={COLORS.accent} />
-                  <Text style={styles.distanceText}>{job.distance_km} km</Text>
+        {jobs.length === 0 ? (
+          <View style={styles.emptyJobs}>
+            <Text style={styles.emptyText}>No hay trabajos disponibles</Text>
+          </View>
+        ) : (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {jobs.map((job) => (
+              <TouchableOpacity
+                key={job.job_id}
+                style={styles.jobChip}
+                onPress={() => handleJobSelect(job)}
+              >
+                <View style={styles.jobChipHeader}>
+                  <Text style={styles.jobChipTitle} numberOfLines={1}>
+                    {job.title}
+                  </Text>
+                  <Text style={styles.jobChipRate}>${job.hourly_rate}/hr</Text>
                 </View>
-              )}
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+                <Text style={styles.jobChipBusiness}>{job.business_name}</Text>
+                {job.distance_km && (
+                  <View style={styles.distanceRow}>
+                    <Ionicons name="location" size={14} color={COLORS.primary} />
+                    <Text style={styles.distanceText}>{job.distance_km} km</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
       </View>
 
       {/* Job Detail Modal */}
@@ -242,11 +287,13 @@ export default function MapScreen() {
                   </View>
                   <View style={styles.detailItem}>
                     <Ionicons name="location" size={20} color={COLORS.accent} />
-                    <Text style={styles.detailText}>{selectedJob.address}</Text>
+                    <Text style={styles.detailText} numberOfLines={1}>{selectedJob.address}</Text>
                   </View>
                 </View>
 
-                <Text style={styles.modalDescription}>{selectedJob.description}</Text>
+                <Text style={styles.modalDescription} numberOfLines={3}>
+                  {selectedJob.description}
+                </Text>
 
                 <TouchableOpacity
                   style={styles.viewButton}
@@ -304,7 +351,7 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
   headerBadge: {
-    backgroundColor: COLORS.primary + '20',
+    backgroundColor: COLORS.primaryTint20,
     paddingHorizontal: SIZES.sm,
     paddingVertical: SIZES.xs,
     borderRadius: SIZES.radiusFull,
@@ -319,6 +366,23 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
+  },
+  mapLoading: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+  },
+  mapFallback: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+  },
+  mapFallbackText: {
+    marginTop: SIZES.md,
+    fontSize: SIZES.fontMd,
+    color: COLORS.textSecondary,
   },
   bottomSheet: {
     backgroundColor: COLORS.surface,
@@ -342,6 +406,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: COLORS.textPrimary,
     marginBottom: SIZES.sm,
+  },
+  emptyJobs: {
+    paddingVertical: SIZES.md,
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: SIZES.fontSm,
+    color: COLORS.textSecondary,
   },
   jobChip: {
     backgroundColor: COLORS.background,
@@ -381,7 +453,7 @@ const styles = StyleSheet.create({
   distanceText: {
     marginLeft: 4,
     fontSize: SIZES.fontXs,
-    color: COLORS.accent,
+    color: COLORS.primary,
   },
   refreshButton: {
     position: 'absolute',
