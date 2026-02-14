@@ -100,7 +100,7 @@ export default function HomeScreen() {
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Hola, {profile?.name?.split(' ')[0]} \ud83d\udc4b</Text>
+          <Text style={styles.greeting}>Hola, {profile?.name?.split(' ')[0]}</Text>
           <Text style={styles.subtitle}>
             {isWorker ? 'Encuentra trabajos cerca de ti' : 'Gestiona tus publicaciones'}
           </Text>
