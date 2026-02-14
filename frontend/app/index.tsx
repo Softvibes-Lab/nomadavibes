@@ -23,40 +23,12 @@ const { width, height } = Dimensions.get('window');
 
 export default function Index() {
   const router = useRouter();
-  const { isAuthenticated, user, profile, isLoading, login, refreshProfile } = useAuthStore();
+  const { isAuthenticated, user, profile, isLoading, refreshProfile } = useAuthStore();
   const scrollRef = useRef<ScrollView>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [selectedRole, setSelectedRole] = useState<'worker' | 'business' | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
-  const [sessionProcessed, setSessionProcessed] = useState(false);
-
-  // Handle session_id from URL on web - run only once
-  useEffect(() => {
-    if (sessionProcessed) return;
-    
-    if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      const hash = window.location.hash;
-      const search = window.location.search;
-      
-      let sessionId = null;
-      const hashMatch = hash.match(/session_id=([^&]+)/);
-      const searchMatch = search.match(/session_id=([^&]+)/);
-      
-      if (hashMatch) sessionId = hashMatch[1];
-      else if (searchMatch) sessionId = searchMatch[1];
-      
-      if (sessionId) {
-        setSessionProcessed(true);
-        // Clean URL immediately
-        window.history.replaceState({}, '', window.location.pathname);
-        // Process login
-        login(sessionId).then(() => {
-          console.log('Login completed');
-        });
-      }
-    }
-  }, [sessionProcessed]);
 
   // Navigate to tabs when authenticated and onboarding complete
   useEffect(() => {
@@ -80,6 +52,7 @@ export default function Index() {
         const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUrl);
         
         if (result.type === 'success' && result.url) {
+          const { login } = useAuthStore.getState();
           const sessionIdMatch = result.url.match(/[#?]session_id=([^&]+)/);
           if (sessionIdMatch) {
             await login(sessionIdMatch[1]);
@@ -118,7 +91,7 @@ export default function Index() {
     setCurrentPage(page);
   };
 
-  // Show loading while checking auth
+  // Show loading
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -183,7 +156,7 @@ export default function Index() {
     );
   }
 
-  // If authenticated with role selected (from this session), show onboarding
+  // If role selected in this session, show onboarding
   if (isAuthenticated && selectedRole && showOnboarding) {
     return (
       <View style={styles.container}>
