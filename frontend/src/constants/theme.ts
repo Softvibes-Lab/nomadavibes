@@ -1,44 +1,54 @@
-// NomadShift Theme Constants
+// NomadShift Theme Constants - Turquoise Green Psychology Based
 export const COLORS = {
-  // Primary colors
-  primary: '#FF6B00',
-  primaryLight: '#FF8533',
-  primaryDark: '#CC5500',
+  // Primary colors (Turquoise Green - Trust + Growth)
+  primary: '#00BFA5',
+  primaryLight: '#00D9B8',
+  primaryDark: '#008C7A',
   
-  // Accent colors
-  accent: '#00B8A9',
-  accentLight: '#33C9BD',
-  accentDark: '#009688',
+  // Secondary (Coral - Controlled energy)
+  secondary: '#FF7A5A',
+  secondaryLight: '#FF9B82',
+  secondaryDark: '#E65C3A',
   
-  // Neutrals
+  // Accent / Prestige (Growth green)
+  accent: '#10B981',
+  accentLight: '#34D399',
+  accentDark: '#059669',
+  
+  // Neutrals (Clean Material 3)
   white: '#FFFFFF',
   black: '#000000',
-  background: '#F5F5F5',
+  background: '#F8FAFC',
   surface: '#FFFFFF',
   
   // Dark mode
-  darkBackground: '#121212',
-  darkSurface: '#1E1E1E',
-  darkCard: '#2D2D2D',
+  darkBackground: '#0F172A',
+  darkSurface: '#1E2937',
+  darkCard: '#334155',
   
   // Text colors
-  textPrimary: '#212121',
-  textSecondary: '#757575',
-  textDisabled: '#9E9E9E',
+  textPrimary: '#0F172A',
+  textSecondary: '#64748B',
+  textDisabled: '#94A3B8',
   textLight: '#FFFFFF',
   
   // Status colors
-  success: '#4CAF50',
-  warning: '#FFC107',
-  error: '#F44336',
-  info: '#2196F3',
+  success: '#10B981',
+  warning: '#F59E0B',
+  error: '#EF4444',
+  info: '#3B82F6',
   
   // Borders and dividers
-  border: '#E0E0E0',
-  divider: '#EEEEEE',
+  border: '#E2E8F0',
+  divider: '#F1F5F9',
   
   // Shadows
-  shadow: 'rgba(0, 0, 0, 0.1)',
+  shadow: 'rgba(0, 0, 0, 0.08)',
+  
+  // Special - Turquoise tints for backgrounds
+  primaryTint: '#F0FFFB',
+  primaryTint10: 'rgba(0, 191, 165, 0.1)',
+  primaryTint20: 'rgba(0, 191, 165, 0.2)',
 };
 
 export const FONTS = {
@@ -76,23 +86,23 @@ export const SIZES = {
 
 export const SHADOWS = {
   small: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
     elevation: 2,
   },
   medium: {
-    shadowColor: '#000',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 4,
   },
   large: {
-    shadowColor: '#000',
+    shadowColor: '#0F172A',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.12,
     shadowRadius: 16,
     elevation: 8,
   },
