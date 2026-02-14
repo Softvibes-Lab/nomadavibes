@@ -1,58 +1,73 @@
 import React, { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Platform } from 'react-native';
 import { useAuthStore } from '../src/store/authStore';
 import { COLORS } from '../src/constants/theme';
 import * as Linking from 'expo-linking';
-import * as WebBrowser from 'expo-web-browser';
-import { Platform } from 'react-native';
 
 export default function RootLayout() {
-  const { isLoading, checkAuth } = useAuthStore();
+  const { isLoading, checkAuth, login } = useAuthStore();
   const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
     const init = async () => {
-      // Handle deep link session_id on cold start
-      const initialUrl = await Linking.getInitialURL();
-      if (initialUrl) {
-        await handleAuthUrl(initialUrl);
+      // On web, check URL for session_id first
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        const hash = window.location.hash;
+        const search = window.location.search;
+        
+        let sessionId = null;
+        const hashMatch = hash.match(/session_id=([^&]+)/);
+        const searchMatch = search.match(/session_id=([^&]+)/);
+        
+        if (hashMatch) sessionId = hashMatch[1];
+        else if (searchMatch) sessionId = searchMatch[1];
+        
+        if (sessionId) {
+          // Clean URL
+          window.history.replaceState({}, '', window.location.pathname);
+          // Login with session_id
+          await login(sessionId);
+          setInitializing(false);
+          return;
+        }
+      }
+      
+      // On mobile, handle deep links
+      if (Platform.OS !== 'web') {
+        const initialUrl = await Linking.getInitialURL();
+        if (initialUrl) {
+          const match = initialUrl.match(/[#?]session_id=([^&]+)/);
+          if (match) {
+            await login(match[1]);
+            setInitializing(false);
+            return;
+          }
+        }
       }
 
-      // Check existing auth
+      // Check existing auth if no session_id in URL
       await checkAuth();
       setInitializing(false);
     };
 
     init();
 
-    // Handle deep links while app is running
-    const subscription = Linking.addEventListener('url', (event) => {
-      handleAuthUrl(event.url);
-    });
+    // Handle deep links while app is running (mobile only)
+    if (Platform.OS !== 'web') {
+      const subscription = Linking.addEventListener('url', async (event) => {
+        const match = event.url.match(/[#?]session_id=([^&]+)/);
+        if (match) {
+          await login(match[1]);
+        }
+      });
 
-    return () => {
-      subscription.remove();
-    };
+      return () => {
+        subscription.remove();
+      };
+    }
   }, []);
-
-  const handleAuthUrl = async (url: string) => {
-    const { login } = useAuthStore.getState();
-    
-    // Parse session_id from URL
-    let sessionId = null;
-    
-    // Check hash
-    const hashMatch = url.match(/[#?]session_id=([^&]+)/);
-    if (hashMatch) {
-      sessionId = hashMatch[1];
-    }
-    
-    if (sessionId) {
-      await login(sessionId);
-    }
-  };
 
   if (initializing || isLoading) {
     return (
