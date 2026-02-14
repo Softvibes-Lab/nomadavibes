@@ -21,30 +21,28 @@ interface RoleSelectionCardProps {
 
 const CARD_DATA = {
   worker: {
-    title: 'Soy Trabajador N\u00f3mada',
-    subtitle: 'Busco trabajos flexibles cerca de m\u00ed',
+    title: 'Soy Trabajador Nómada',
+    subtitle: 'Busco trabajos flexibles cerca de mí',
     icon: 'person' as const,
     image: 'https://images.unsplash.com/photo-1597242035030-ec338a70d28f?w=600',
     features: [
       'Encuentra trabajos cercanos',
       'Trabaja cuando quieras',
-      'Gana dinero r\u00e1pido',
-      'Construye tu reputaci\u00f3n',
+      'Gana dinero rápido',
+      'Construye tu reputación',
     ],
-    gradient: [COLORS.primary, COLORS.primaryDark],
   },
   business: {
-    title: 'Soy Due\u00f1o de Negocio',
+    title: 'Soy Dueño de Negocio',
     subtitle: 'Busco trabajadores para mi negocio',
     icon: 'business' as const,
     image: 'https://images.unsplash.com/photo-1649768757981-45b683e4889c?w=600',
     features: [
-      'Encuentra trabajadores r\u00e1pido',
+      'Encuentra trabajadores rápido',
       'Perfiles verificados',
-      'Sistema de reputaci\u00f3n',
-      'Contrataci\u00f3n instant\u00e1nea',
+      'Sistema de reputación',
+      'Contratación instantánea',
     ],
-    gradient: [COLORS.accent, COLORS.accentDark],
   },
 };
 
@@ -60,8 +58,8 @@ export const RoleSelectionCard: React.FC<RoleSelectionCardProps> = ({
         {/* Image Section */}
         <View style={styles.imageContainer}>
           <Image source={{ uri: data.image }} style={styles.image} />
-          <View style={[styles.overlay, { backgroundColor: type === 'worker' ? 'rgba(255,107,0,0.3)' : 'rgba(0,184,169,0.3)' }]} />
-          <View style={styles.iconBadge}>
+          <View style={[styles.overlay, { backgroundColor: 'rgba(0, 191, 165, 0.25)' }]} />
+          <View style={[styles.iconBadge, { backgroundColor: COLORS.primary }]}>
             <Ionicons name={data.icon} size={28} color={COLORS.white} />
           </View>
         </View>
@@ -78,7 +76,7 @@ export const RoleSelectionCard: React.FC<RoleSelectionCardProps> = ({
                 <Ionicons 
                   name="checkmark-circle" 
                   size={20} 
-                  color={type === 'worker' ? COLORS.primary : COLORS.accent} 
+                  color={COLORS.primary}
                 />
                 <Text style={styles.featureText}>{feature}</Text>
               </View>
@@ -87,10 +85,7 @@ export const RoleSelectionCard: React.FC<RoleSelectionCardProps> = ({
 
           {/* Select Button */}
           <TouchableOpacity
-            style={[
-              styles.selectButton,
-              { backgroundColor: type === 'worker' ? COLORS.primary : COLORS.accent },
-            ]}
+            style={styles.selectButton}
             onPress={onSelect}
             activeOpacity={0.8}
           >
@@ -114,6 +109,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: SIZES.radiusXl,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: COLORS.primary + '30',
   },
   imageContainer: {
     height: '40%',
@@ -134,7 +131,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
     ...SHADOWS.medium,
@@ -175,6 +171,7 @@ const styles = StyleSheet.create({
     paddingVertical: SIZES.md,
     borderRadius: SIZES.radiusMd,
     marginTop: SIZES.md,
+    backgroundColor: COLORS.primary,
   },
   selectButtonText: {
     color: COLORS.white,
