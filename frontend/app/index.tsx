@@ -5,9 +5,9 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
-  Animated,
   ScrollView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,22 +23,50 @@ const { width, height } = Dimensions.get('window');
 
 export default function Index() {
   const router = useRouter();
-  const { isAuthenticated, user, profile, checkAuth, login, refreshProfile } = useAuthStore();
+  const { isAuthenticated, user, profile, isLoading, login, refreshProfile } = useAuthStore();
   const scrollRef = useRef<ScrollView>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [selectedRole, setSelectedRole] = useState<'worker' | 'business' | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [sessionProcessed, setSessionProcessed] = useState(false);
 
+  // Handle session_id from URL on web - run only once
   useEffect(() => {
-    // If authenticated and onboarding completed, redirect to main app
-    if (isAuthenticated && user?.onboarding_completed && profile) {
+    if (sessionProcessed) return;
+    
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      const hash = window.location.hash;
+      const search = window.location.search;
+      
+      let sessionId = null;
+      const hashMatch = hash.match(/session_id=([^&]+)/);
+      const searchMatch = search.match(/session_id=([^&]+)/);
+      
+      if (hashMatch) sessionId = hashMatch[1];
+      else if (searchMatch) sessionId = searchMatch[1];
+      
+      if (sessionId) {
+        setSessionProcessed(true);
+        // Clean URL immediately
+        window.history.replaceState({}, '', window.location.pathname);
+        // Process login
+        login(sessionId).then(() => {
+          console.log('Login completed');
+        });
+      }
+    }
+  }, [sessionProcessed]);
+
+  // Navigate to tabs when authenticated and onboarding complete
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && user?.onboarding_completed && profile) {
       router.replace('/(tabs)');
     }
-  }, [isAuthenticated, user, profile]);
+  }, [isLoading, isAuthenticated, user?.onboarding_completed, profile]);
 
   const handleLogin = async () => {
-    setLoading(true);
+    setLoginLoading(true);
     try {
       const redirectUrl = Platform.OS === 'web'
         ? window.location.origin + '/'
@@ -61,33 +89,13 @@ export default function Index() {
     } catch (error) {
       console.error('Login error:', error);
     } finally {
-      setLoading(false);
+      setLoginLoading(false);
     }
   };
 
-  // Handle session_id from URL on web
-  useEffect(() => {
-    if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      const hash = window.location.hash;
-      const search = window.location.search;
-      
-      let sessionId = null;
-      const hashMatch = hash.match(/session_id=([^&]+)/);
-      const searchMatch = search.match(/session_id=([^&]+)/);
-      
-      if (hashMatch) sessionId = hashMatch[1];
-      else if (searchMatch) sessionId = searchMatch[1];
-      
-      if (sessionId) {
-        // Clean URL
-        window.history.replaceState({}, '', window.location.pathname);
-        login(sessionId);
-      }
-    }
-  }, []);
-
   const handleRoleSelect = async (role: 'worker' | 'business') => {
     setSelectedRole(role);
+    setLoginLoading(true);
     
     try {
       await userAPI.setRole(role);
@@ -95,6 +103,8 @@ export default function Index() {
       setShowOnboarding(true);
     } catch (error) {
       console.error('Error setting role:', error);
+    } finally {
+      setLoginLoading(false);
     }
   };
 
@@ -108,8 +118,18 @@ export default function Index() {
     setCurrentPage(page);
   };
 
+  // Show loading while checking auth
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>Cargando...</Text>
+      </View>
+    );
+  }
+
   // If authenticated but no role selected, show role selection
-  if (isAuthenticated && !user?.role && !showOnboarding) {
+  if (isAuthenticated && user && !user.role && !showOnboarding) {
     return (
       <View style={styles.container}>
         {/* Header */}
@@ -140,12 +160,18 @@ export default function Index() {
 
         {/* Swipe hint */}
         <Text style={styles.swipeHint}>Desliza para ver opciones</Text>
+
+        {loginLoading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+          </View>
+        )}
       </View>
     );
   }
 
   // If authenticated with role but onboarding not complete, show onboarding
-  if (isAuthenticated && user?.role && !user?.onboarding_completed && showOnboarding) {
+  if (isAuthenticated && user?.role && !user?.onboarding_completed) {
     return (
       <View style={styles.container}>
         <OnboardingSteps
@@ -157,8 +183,8 @@ export default function Index() {
     );
   }
 
-  // If authenticated with role selected, show onboarding
-  if (isAuthenticated && selectedRole) {
+  // If authenticated with role selected (from this session), show onboarding
+  if (isAuthenticated && selectedRole && showOnboarding) {
     return (
       <View style={styles.container}>
         <OnboardingSteps
@@ -170,7 +196,7 @@ export default function Index() {
     );
   }
 
-  // Welcome/Login screen
+  // Welcome/Login screen (not authenticated)
   return (
     <View style={styles.welcomeContainer}>
       {/* Background gradient effect */}
@@ -225,13 +251,17 @@ export default function Index() {
         <TouchableOpacity
           style={styles.loginButton}
           onPress={handleLogin}
-          disabled={loading}
+          disabled={loginLoading}
           activeOpacity={0.8}
         >
-          <Ionicons name="logo-google" size={24} color={COLORS.white} />
-          <Text style={styles.loginButtonText}>
-            {loading ? 'Conectando...' : 'Continuar con Google'}
-          </Text>
+          {loginLoading ? (
+            <ActivityIndicator color={COLORS.white} />
+          ) : (
+            <>
+              <Ionicons name="logo-google" size={24} color={COLORS.white} />
+              <Text style={styles.loginButtonText}>Continuar con Google</Text>
+            </>
+          )}
         </TouchableOpacity>
 
         <Text style={styles.termsText}>
@@ -246,6 +276,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+  },
+  loadingText: {
+    marginTop: SIZES.md,
+    fontSize: SIZES.fontMd,
+    color: COLORS.textSecondary,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     paddingTop: 60,
